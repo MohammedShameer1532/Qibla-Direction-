@@ -9,7 +9,6 @@ const QiblaDirection = ({ latitude, longitude }) => {
     const fetchQibla = async () => {
       try {
         const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
-        console.log(res)
         setQiblaDirection(res?.data?.data?.direction);
       } catch (error) {
         console.error(error);
@@ -23,7 +22,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
         angle = event.webkitCompassHeading;
       } else {
         // Android devices
-        angle = 360 - event.alpha;
+        angle = event.alpha ? 360 - event.alpha : 0;
       }
       setDeviceOrientation(angle);
     };
@@ -32,10 +31,10 @@ const QiblaDirection = ({ latitude, longitude }) => {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         const permission = await DeviceOrientationEvent.requestPermission();
         if (permission === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation, true);
+          window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         }
       } else {
-        window.addEventListener('deviceorientation', handleOrientation, true);
+        window.addEventListener('deviceorientationabsolute', handleOrientation, true);
       }
     };
 
@@ -45,19 +44,12 @@ const QiblaDirection = ({ latitude, longitude }) => {
     }
 
     return () => {
-      window.removeEventListener('deviceorientation', handleOrientation, true);
+      window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
     };
   }, [latitude, longitude]);
 
-  const rotationStyle = {
-    transform: `rotate(${-deviceOrientation}deg)`,
-    transition: 'transform 0.2s ease-out'
-  };
-
-  const qiblaStyle = {
-    transform: `rotate(${qiblaDirection}deg)`,
-    transition: 'transform 0.2s ease-out'
-  };
+  // Calculate the relative Qibla direction based on device orientation
+  const relativeQiblaDirection = qiblaDirection ? (qiblaDirection - deviceOrientation + 360) % 360 : 0;
 
   return (
     <div className="compass-container">
@@ -71,21 +63,22 @@ const QiblaDirection = ({ latitude, longitude }) => {
             margin: "0 auto",
             position: "relative"
           }}>
-            {/* Compass Rose */}
             <div style={{
               width: "100%",
               height: "100%",
               borderRadius: "50%",
               border: "3px solid #333",
               position: "relative",
-              ...rotationStyle
+              transform: `rotate(${-deviceOrientation}deg)`,
+              transition: 'transform 0.2s ease-out'
             }}>
-              <div style={{ position: "absolute", top: "10px", width: "100%", textAlign: "center" }}>N</div>
-              <div style={{ position: "absolute", bottom: "10px", width: "100%", textAlign: "center" }}>S</div>
-              <div style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)" }}>E</div>
-              <div style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}>W</div>
-              
-              {/* Qibla Pointer */}
+              {/* Cardinal Points */}
+              <div style={{ position: "absolute", top: "10px", width: "100%", textAlign: "center", fontWeight: "bold" }}>N</div>
+              <div style={{ position: "absolute", bottom: "10px", width: "100%", textAlign: "center", fontWeight: "bold" }}>S</div>
+              <div style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", fontWeight: "bold" }}>E</div>
+              <div style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", fontWeight: "bold" }}>W</div>
+
+              {/* Qibla Arrow */}
               <div style={{
                 position: "absolute",
                 top: "50%",
@@ -94,17 +87,26 @@ const QiblaDirection = ({ latitude, longitude }) => {
                 height: "4px",
                 background: "red",
                 transformOrigin: "left center",
-                ...qiblaStyle
+                transform: `rotate(${relativeQiblaDirection}deg)`,
+                transition: 'transform 0.2s ease-out'
               }}>
-                <div style={{ position: "absolute", right: "-30px", top: "-10px", color: "red", whiteSpace: "nowrap" }}>
+                <div style={{ 
+                  position: "absolute", 
+                  right: "-40px", 
+                  top: "-10px", 
+                  color: "red", 
+                  whiteSpace: "nowrap",
+                  fontWeight: "bold"
+                }}>
                   Qibla ▶
                 </div>
               </div>
             </div>
           </div>
-          <p style={{ marginTop: "20px" }}>
-            Current heading: {deviceOrientation.toFixed(1)}°
-          </p>
+          <div style={{ marginTop: "20px" }}>
+            <p>Current heading: {deviceOrientation.toFixed(1)}°</p>
+            <p>Relative Qibla: {relativeQiblaDirection.toFixed(1)}°</p>
+          </div>
         </div>
       ) : (
         <p>Calibrating compass...</p>
