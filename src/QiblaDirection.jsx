@@ -10,9 +10,10 @@ const QiblaDirection = ({ latitude, longitude }) => {
     // Fetch Qibla direction based on user location
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         const qiblaDirection = res?.data?.data?.direction;
         setDirection(qiblaDirection);
+        console.log("Qibla Direction:", qiblaDirection);
       } catch (error) {
         console.error(error);
         setError("Failed to fetch Qibla direction");
@@ -30,6 +31,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
       if (event.alpha !== null) {
         // 'alpha' gives the rotation around the Z axis in degrees (0 to 360)
         setDeviceHeading(event.alpha);
+        console.log("Device Heading:", event.alpha);
       }
     };
 
@@ -42,6 +44,8 @@ const QiblaDirection = ({ latitude, longitude }) => {
   }, []);
 
   const adjustedDirection = direction !== null ? (direction - deviceHeading + 360) % 360 : 0;
+
+  console.log("Adjusted Direction:", adjustedDirection);
 
   return (
     <div>
