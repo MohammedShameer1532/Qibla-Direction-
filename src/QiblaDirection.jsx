@@ -4,6 +4,7 @@ import axios from 'axios';
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
   const [deviceHeading, setDeviceHeading] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch Qibla direction based on user location
@@ -14,8 +15,10 @@ const QiblaDirection = ({ latitude, longitude }) => {
         setDirection(qiblaDirection);
       } catch (error) {
         console.error(error);
+        setError("Failed to fetch Qibla direction");
       }
     };
+
     if (latitude && longitude) {
       fetchQibla();
     }
@@ -42,6 +45,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
 
   return (
     <div>
+      {error && <p>{error}</p>}
       {direction !== null ? (
         <div>
           <h3>Qibla Direction</h3>
