@@ -5,14 +5,15 @@ const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
   const [deviceHeading, setDeviceHeading] = useState(0);
 
+  // Fetch the Qibla direction from API
   useEffect(() => {
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         const qiblaDirection = res?.data?.data?.direction;
         setDirection(qiblaDirection);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching Qibla direction:", error);
       }
     };
 
@@ -21,9 +22,10 @@ const QiblaDirection = ({ latitude, longitude }) => {
     }
   }, [latitude, longitude]);
 
+  // Set up device orientation listener
   useEffect(() => {
     const handleOrientation = (event) => {
-      const { alpha } = event;
+      const alpha = event.webkitCompassHeading ?? event.alpha;
       if (alpha !== null) {
         setDeviceHeading(alpha);
       }
@@ -36,6 +38,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
     };
   }, []);
 
+  // Adjusted rotation based on Qibla and device heading
   const adjustedRotation = direction !== null ? direction - deviceHeading : 0;
 
   return (
@@ -55,6 +58,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               justifyContent: "center",
               position: "relative",
               transform: `rotate(${adjustedRotation}deg)`,
+              transition: "transform 0.5s ease"
             }}
           >
             <div style={{ position: "absolute", top: "5%", fontSize: "1.2rem" }}>
