@@ -1,57 +1,52 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from 'axios';
 
 const QiblaDirection = ({ latitude, longitude }) => {
-  const [qiblaDirection, setQiblaDirection] = useState(null);
+  const [direction, setDirection] = useState(null);
   const [deviceHeading, setDeviceHeading] = useState(0);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Fetch Qibla direction based on user location
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(
-          `https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`
-        );
-        const direction = res?.data?.data?.direction;
-        setQiblaDirection(direction);
+        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const qiblaDirection = res?.data?.data?.direction;
+        setDirection(qiblaDirection);
       } catch (error) {
-        console.error("Error fetching Qibla direction:", error);
-        setError("Could not fetch Qibla direction.");
+        console.error(error);
       }
     };
-
     if (latitude && longitude) {
       fetchQibla();
     }
   }, [latitude, longitude]);
 
-  // Set up device orientation listener
   useEffect(() => {
+    // Function to handle device orientation change
     const handleOrientation = (event) => {
-      if (event.absolute && event.alpha !== null) {
+      if (event.alpha !== null) {
+        // 'alpha' gives the rotation around the Z axis in degrees (0 to 360)
         setDeviceHeading(event.alpha);
       }
     };
 
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    // Listen for device orientation events
+    window.addEventListener("deviceorientation", handleOrientation);
 
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
     };
   }, []);
 
-  // Calculate the rotation angle for Qibla based on device heading
-  const adjustedQiblaDirection =
-    qiblaDirection !== null ? (qiblaDirection - deviceHeading + 360) % 360 : null;
+  const adjustedDirection = direction !== null ? (direction - deviceHeading + 360) % 360 : 0;
 
   return (
     <div>
-      {error ? (
-        <p>{error}</p>
-      ) : qiblaDirection !== null ? (
+      {direction !== null ? (
         <div>
           <h3>Qibla Direction</h3>
-          <p>The Qibla is at {qiblaDirection.toFixed(2)}° from North.</p>
+          <p>The Qibla is at {direction.toFixed(2)}° from North.</p>
+          <p>Device Heading: {deviceHeading.toFixed(2)}°</p>
           <div
             style={{
               width: "200px",
@@ -62,7 +57,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               alignItems: "center",
               justifyContent: "center",
               position: "relative",
-              transform: `rotate(${adjustedQiblaDirection}deg)`,
+              transform: `rotate(${adjustedDirection}deg)`, // Adjust Qibla direction based on device heading
             }}
           >
             <div style={{ position: "absolute", top: "5%", fontSize: "1.2rem" }}>
