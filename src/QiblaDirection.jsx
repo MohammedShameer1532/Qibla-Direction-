@@ -10,7 +10,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
     // Fetch Qibla direction based on user location
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         const qiblaDirection = res?.data?.data?.direction;
         setDirection(qiblaDirection);
         console.log("Qibla Direction:", qiblaDirection);
