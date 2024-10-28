@@ -9,7 +9,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
   useEffect(() => {
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         const qiblaDirection = res?.data?.data?.direction;
         setDirection(qiblaDirection);
       } catch (error) {
