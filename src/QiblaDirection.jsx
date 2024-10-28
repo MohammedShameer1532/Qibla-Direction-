@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
-  const [deviceOrientation, setDeviceOrientation] = useState(0);
+  const [compassHeading, setCompassHeading] = useState(0);
 
   useEffect(() => {
     const fetchQibla = async () => {
@@ -19,10 +19,14 @@ const QiblaDirection = ({ latitude, longitude }) => {
     if (latitude && longitude) {
       fetchQibla();
     }
+  }, [latitude, longitude]);
 
+  useEffect(() => {
     const handleOrientation = (event) => {
-      const alpha = event.alpha;
-      setDeviceOrientation(alpha);
+      const alpha = event.alpha; // Z-axis rotation (compass heading)
+      if (alpha !== null) {
+        setCompassHeading(alpha);
+      }
     };
 
     window.addEventListener('deviceorientation', handleOrientation);
@@ -30,9 +34,10 @@ const QiblaDirection = ({ latitude, longitude }) => {
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
     };
-  }, [latitude, longitude]);
+  }, []);
 
-  const calculatedDirection = direction !== null ? (direction - deviceOrientation) : 0;
+  // Normalize the adjusted direction
+  const adjustedDirection = (direction - compassHeading + 360) % 360;
 
   return (
     <div>
@@ -50,7 +55,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               alignItems: "center",
               justifyContent: "center",
               position: "relative",
-              transform: `rotate(${calculatedDirection}deg)`,
+              transform: `rotate(${adjustedDirection}deg)`, // Rotate based on adjusted Qibla direction
             }}
           >
             <div style={{ position: "absolute", top: "5%", fontSize: "1.2rem" }}>
