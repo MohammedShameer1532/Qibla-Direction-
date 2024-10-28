@@ -31,7 +31,7 @@ const App = () => {
     // Step 2: Fetch Qibla direction from API
     const fetchQiblaDirection = async (latitude, longitude) => {
       try {
-        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         setQiblaDirection(res?.data?.data?.direction);
       } catch (error) {
         console.error("Error fetching Qibla direction:", error);
