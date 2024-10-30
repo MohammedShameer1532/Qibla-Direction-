@@ -9,7 +9,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
   useEffect(() => {
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         console.log(res)
 
         const response = res?.data?.data?.direction;
@@ -63,18 +63,20 @@ const QiblaDirection = ({ latitude, longitude }) => {
         <div className="container">
           <h1 className="app-name">Beautiful Compass App</h1>
           <div className="compass-container" style={{ position: "relative" }}>
-               <img
+            <img
               src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
               alt="Compass"
               className="compass-image"
               style={{ transform: `rotate(${direction}deg)` }}
             />
             {/* Qibla direction indicator */}
+         
           </div>
           <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
           <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
           <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
+        
       ) : (
         <p>Loading Qibla direction...</p>
       )}
