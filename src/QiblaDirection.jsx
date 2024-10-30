@@ -63,13 +63,18 @@ const QiblaDirection = ({ latitude, longitude }) => {
         <div className="container">
           <h1 className="app-name">Beautiful Compass App</h1>
           <div className="compass-container" style={{ position: "relative" }}>
-            <img
-              src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
-              alt="Compass"
-              className="compass-image"
-              style={{ transform: `rotate(${direction - heading}deg)` }}
+            <div 
+              className="qibla-indicator"
+              style={{ 
+                position: 'absolute',
+                transform: `rotate(${qiblaDirection}deg)`,
+                width: '4px',
+                height: '100px',
+                backgroundColor: 'green',
+                top: '75px',
+                left: '123px'
+              }}
             />
-            {/* Qibla direction indicator */}
           </div>
           <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
           <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
