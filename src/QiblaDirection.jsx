@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import "./App.css"
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
-  const [deviceHeading, setDeviceHeading] = useState(0);
+  const [heading, setHeading] = useState(0);
 
   useEffect(() => {
     const fetchQibla = async () => {
       try {
-        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        console.log(res)
+
         const response = res?.data?.data?.direction;
         setDirection(response);
       } catch (error) {
         console.error(error);
       }
     };
-
     if (latitude && longitude) {
       fetchQibla();
     }
@@ -23,45 +25,55 @@ const QiblaDirection = ({ latitude, longitude }) => {
 
   useEffect(() => {
     const handleOrientation = (event) => {
-      // Get the device's heading relative to North
-      const heading = event.alpha;
-      setDeviceHeading(heading);
+      let newHeading = event.alpha;
+
+      if (newHeading !== null) {
+        newHeading = (-1 * (newHeading - 85) + 360) % 360;
+        setHeading(newHeading);
+      }
     };
 
-    // Listen for device orientation changes
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(response => {
+          if (response === 'granted') {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener("deviceorientation", handleOrientation);
+    }
 
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
     };
   }, []);
 
+  const getCardinalDirection = () => {
+    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    const index = Math.round(heading / 45) % 8;
+    return directions[index];
+  };
+
   return (
     <div>
       {direction !== null ? (
-        <div>
-          <h3>Qibla Direction</h3>
-          <p>The Qibla is at {direction.toFixed(2)}° from North.</p>
-          <div
-            style={{
-              width: "200px",
-              height: "200px",
-              borderRadius: "50%",
-              border: "2px solid #333",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              transform: `rotate(${direction - deviceHeading}deg)`, // Adjust based on device heading
-            }}
-          >
-            <div style={{ position: "absolute", top: "5%", fontSize: "1.2rem" }}>
-              ↑ North
-            </div>
-            <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "red" }}>
-              Qibla
-            </div>
+        <div className="container">
+          <h1 className="app-name">Beautiful Compass App</h1>
+          <div className="compass-container" style={{ position: "relative" }}>
+            <img
+              src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
+              alt="Compass"
+              className="compass-image"
+              style={{ transform: `rotate(${direction - heading}deg)` }}
+            />
+            {/* Qibla direction indicator */}
           </div>
+          <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
+          <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
+          <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
       ) : (
         <p>Loading Qibla direction...</p>
