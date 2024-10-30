@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import "./App.css"
-import arrow from './assets/arrow.png'
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
