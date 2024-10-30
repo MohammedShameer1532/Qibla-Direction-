@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import "./App.css"
+import './App.css'
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
@@ -10,8 +10,6 @@ const QiblaDirection = ({ latitude, longitude }) => {
     const fetchQibla = async () => {
       try {
         const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
-        console.log(res)
-
         const response = res?.data?.data?.direction;
         setDirection(response);
       } catch (error) {
@@ -33,8 +31,8 @@ const QiblaDirection = ({ latitude, longitude }) => {
       }
     };
 
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (typeof DeviceOrientationEvent !== 'undefined' && 
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
       DeviceOrientationEvent.requestPermission()
         .then(response => {
           if (response === 'granted') {
@@ -67,11 +65,11 @@ const QiblaDirection = ({ latitude, longitude }) => {
               src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
               alt="Compass"
               className="compass-image"
-              style={{ transform: `rotate(${direction}deg)` }}
+              style={{ transform: `rotate(${-heading}deg)` }}
             />
             {/* Qibla direction indicator */}
           </div>
-          <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
+          <p className="heading-value">{`Heading: ${heading?.toFixed(2) || 0}°`}</p>
           <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
           <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
