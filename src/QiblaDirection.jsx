@@ -26,11 +26,11 @@ const QiblaDirection = ({ latitude, longitude }) => {
   useEffect(() => {
     const handleOrientation = (event) => {
       let newHeading = event.alpha;
-      
+
       if (newHeading !== null) {
-        newHeading = (newHeading + 360) % 360; // Normalize between 0-360
+        newHeading = (-1 * (newHeading - 85) + 360) % 360;
         setHeading(newHeading);
-      
+      }
     };
 
     if (typeof DeviceOrientationEvent !== 'undefined' &&
@@ -99,9 +99,6 @@ const QiblaDirection = ({ latitude, longitude }) => {
                 }}
               />
             </div>
-
-
-            {/* Qibla direction indicator */}
           </div>
           <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
           <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
