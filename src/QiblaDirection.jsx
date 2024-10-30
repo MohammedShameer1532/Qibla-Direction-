@@ -69,15 +69,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               className="compass-image"
               style={{ transform: `rotate(${direction - heading}deg)` }}
             /> */}
-            <img src={arrow}
-             alt="Compass"
-             className="compass-image"
-             style={{ 
-              width: "50%",  
-              height: "40%",   
-              transform: `rotate(${direction - heading}deg)` }}
-            />
-            {/* <div
+            <div
               className="clock-needle"
               style={{
                 position: "absolute",
@@ -101,7 +93,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
                   borderBottom: "10px solid black",  // Match needle color
                 }}
               />
-            </div> */}
+            </div>
 
 
             {/* Qibla direction indicator */}
