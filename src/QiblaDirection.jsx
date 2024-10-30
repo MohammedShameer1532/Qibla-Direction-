@@ -69,28 +69,34 @@ const QiblaDirection = ({ latitude, longitude }) => {
               className="compass-image"
               style={{ transform: `rotate(${direction - heading}deg)` }}
             /> */}
+            <strong><h2> qibla</h2></strong>
             <div
               className="clock-needle"
               style={{
                 position: "absolute",
-                width: "2px",                // Thin needle
-                height: "100px",             // Length of the needle
-                backgroundColor: "black",      // Color of the needle
+                width: "2px",
+                height: "90px",   // Length of the needle
+                backgroundColor: "black",
                 transform: `rotate(${direction - heading}deg) translateX(-50%)`,
                 transformOrigin: "bottom center",  // Pivot from the bottom
+                display: 'flex',
+                bottom: "50%", // Centers needle vertically
+                left: "50%",
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
             >
               <div
                 className="arrowhead"
                 style={{
                   position: "absolute",
-                  bottom: "100%",  // Position arrowhead at the top of the needle
-                  left: "-4px",    // Center it horizontally
+                  bottom: "100%",
+                  left: "-4px",
                   width: "0",
                   height: "0",
                   borderLeft: "6px solid transparent",
                   borderRight: "6px solid transparent",
-                  borderBottom: "10px solid black",  // Match needle color
+                  borderBottom: "10px solid black",
                 }}
               />
             </div>
