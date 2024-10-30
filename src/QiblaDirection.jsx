@@ -67,6 +67,19 @@ const QiblaDirection = ({ latitude, longitude }) => {
               className="compass-image"
               style={{ transform: `rotate(${direction - heading}deg)` }}
             />
+              <div
+              className="qibla-pointer"
+              style={{
+                position: "absolute",
+                width: "4px",
+                height: "50%",
+                backgroundColor: "red",
+                top: "25%",
+                left: "50%",
+                transform: `rotate(${direction - heading}deg) translateX(-50%)`,
+                transformOrigin: "bottom center",
+              }}
+            />
             {/* Qibla direction indicator */}
           </div>
           <p className="heading-value">{`Heading: ${heading?.toFixed(2) || 0}°`}</p>
