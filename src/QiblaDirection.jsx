@@ -77,7 +77,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
                 width: "2px",
                 height: "90px",   // Length of the needle
                 backgroundColor: "black",
-                transform: `rotate(${direction}deg) translateX(-50%)`,
+                transform: `rotate(${direction - heading}deg) translateX(-50%)`,
                 transformOrigin: "bottom center",  // Pivot from the bottom
                 display: 'flex',
                 bottom: "50%", // Centers needle vertically
