@@ -104,7 +104,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
 
             {/* Qibla direction indicator */}
           </div>
-          <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
+          <p className="heading-value">{`Heading: ${direction?.toFixed(2) || 0}°`}</p>
           <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
           <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
