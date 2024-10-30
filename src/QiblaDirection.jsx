@@ -1,57 +1,120 @@
 import { useEffect, useState } from "react";
-import axios from 'axios'
+import axios from 'axios';
+import './App.css';
+import arrow from './assets/arrow.png'
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
+  const [heading, setHeading] = useState(0);
 
   useEffect(() => {
-   const fetchQibla = async () => {
+    const fetchQibla = async () => {
       try {
-        const res = await axios.get(`http://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
         console.log(res);
-        const response = res?.data?.data?.direction 
-        setDirection(response)
+        const response = res?.data?.data?.direction;
+        setDirection(response);
       } catch (error) {
-       console.error(error)
+        console.error(error);
       }
-    }
+    };
     if (latitude && longitude) {
       fetchQibla();
     }
-  }, [latitude, longitude])
+  }, [latitude, longitude]);
+
+  useEffect(() => {
+    const handleOrientation = (event) => {
+      let newHeading = event.alpha;
+
+      if (newHeading !== null) {
+        newHeading = (-1 * (newHeading - 85) + 360) % 360;
+        setHeading(newHeading);
+      }
+    };
+
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(response => {
+          if (response === 'granted') {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener("deviceorientation", handleOrientation);
+    }
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
+  }, []);
+
+  const getCardinalDirection = () => {
+    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    const index = Math.round(heading / 45) % 8;
+    return directions[index];
+  };
 
   return (
     <div>
-    {direction !== null ? (
-      <div>
-        <h3>Qibla Direction</h3>
-        <p>The Qibla is at {direction.toFixed(2)}° from North.</p>
-        <div
-          style={{
-            width: "200px",
-            height: "200px",
-            borderRadius: "50%",
-            border: "2px solid #333",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            transform: `rotate(${direction}deg)`, 
-          }}
-        >
-          <div style={{ position: "absolute", top: "5%", fontSize: "1.2rem" }}>
-            ↑ North
+      {direction !== null ? (
+        <div className="container">
+          <h1 className="app-name">Beautiful Compass App</h1>
+          <div className="compass-container" style={{ position: "relative" }}>
+            {/* <img
+              src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
+              alt="Compass"
+              className="compass-image"
+              style={{ transform: `rotate(${direction - heading}deg)` }}
+            /> */}
+            <img src={arrow}
+             alt="Compass"
+             className="compass-image"
+             style={{ 
+              width: "50%",  
+              height: "40%",   
+              transform: `rotate(${direction - heading}deg)` }}
+            />
+            {/* <div
+              className="clock-needle"
+              style={{
+                position: "absolute",
+                width: "2px",                // Thin needle
+                height: "100px",             // Length of the needle
+                backgroundColor: "black",      // Color of the needle
+                transform: `rotate(${direction - heading}deg) translateX(-50%)`,
+                transformOrigin: "bottom center",  // Pivot from the bottom
+              }}
+            >
+              <div
+                className="arrowhead"
+                style={{
+                  position: "absolute",
+                  bottom: "100%",  // Position arrowhead at the top of the needle
+                  left: "-4px",    // Center it horizontally
+                  width: "0",
+                  height: "0",
+                  borderLeft: "6px solid transparent",
+                  borderRight: "6px solid transparent",
+                  borderBottom: "10px solid black",  // Match needle color
+                }}
+              />
+            </div> */}
+
+
+            {/* Qibla direction indicator */}
           </div>
-          <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "red" }}>
-            Qibla
-          </div>
+          <p className="heading-value">{`Heading: ${direction - heading?.toFixed(2) || 0}°`}</p>
+          <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
+          <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
-      </div>
-    ) : (
-      <p>Loading Qibla direction...</p>
-    )}
-  </div>
-  )
-}
+      ) : (
+        <p>Loading Qibla direction...</p>
+      )}
+    </div>
+  );
+};
 
 export default QiblaDirection;

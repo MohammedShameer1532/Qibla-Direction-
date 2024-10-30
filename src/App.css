@@ -1,0 +1,45 @@
+/* Compass.css */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: #f5f5f5;
+	min-height: 100vh;
+}
+
+.app-name {
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.compass-container {
+	width: 250px;
+	height: 250px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 50%;
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.compass-image {
+	width: 200px;
+	height: 200px;
+	transition: transform 0.1s ease-in-out;
+}
+
+.heading-value {
+	font-size: 18px;
+	margin-top: 10px;
+	color: #555;
+}
+
+.cardinal-direction {
+	font-size: 18px;
+	margin-top: 10px;
+	color: #555;
+}
