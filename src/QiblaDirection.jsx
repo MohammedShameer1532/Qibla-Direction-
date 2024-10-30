@@ -65,7 +65,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
               alt="Compass"
               className="compass-image"
-              style={{ transform: `rotate(${-heading}deg)` }}
+              style={{ transform: `rotate(${direction}deg)` }}
             />
             {/* Qibla direction indicator */}
           </div>
