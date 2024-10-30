@@ -26,11 +26,11 @@ const QiblaDirection = ({ latitude, longitude }) => {
   useEffect(() => {
     const handleOrientation = (event) => {
       let newHeading = event.alpha;
-
+      
       if (newHeading !== null) {
-        newHeading = (-1 * (newHeading - 85) + 360) % 360;
+        newHeading = (newHeading + 360) % 360; // Normalize between 0-360
         setHeading(newHeading);
-      }
+      
     };
 
     if (typeof DeviceOrientationEvent !== 'undefined' &&
