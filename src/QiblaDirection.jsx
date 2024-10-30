@@ -31,8 +31,8 @@ const QiblaDirection = ({ latitude, longitude }) => {
       }
     };
 
-    if (typeof DeviceOrientationEvent !== 'undefined' && 
-        typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
       DeviceOrientationEvent.requestPermission()
         .then(response => {
           if (response === 'granted') {
@@ -65,7 +65,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
               alt="Compass"
               className="compass-image"
-              style={{ transform: `rotate(${direction}deg)` }}
+              style={{ transform: `rotate(${direction - heading}deg)` }}
             />
             {/* Qibla direction indicator */}
           </div>
