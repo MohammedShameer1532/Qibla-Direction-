@@ -51,12 +51,6 @@ const QiblaDirection = ({ latitude, longitude }) => {
     };
   }, []);
 
-  const getCardinalDirection = () => {
-    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-    const index = Math.round(direction / 45) % 8;
-    return directions[index];
-  };
-
   return (
     <div>
       {direction !== null ? (
@@ -100,7 +94,6 @@ const QiblaDirection = ({ latitude, longitude }) => {
               />
             </div>
           </div>
-          <p className="cardinal-direction">{`Direction: ${getCardinalDirection()}`}</p>
           <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
         </div>
       ) : (
