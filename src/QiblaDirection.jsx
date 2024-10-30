@@ -67,7 +67,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
               className="qibla-indicator"
               style={{ 
                 position: 'absolute',
-                transform: `rotate(${qiblaDirection}deg)`,
+                transform: `rotate(${direction}deg)`,
                 width: '4px',
                 height: '100px',
                 backgroundColor: 'green',
