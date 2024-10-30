@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import "./App.css"
+import arrow from './assets/arrow.png'
 
 const QiblaDirection = ({ latitude, longitude }) => {
   const [direction, setDirection] = useState(null);
@@ -63,6 +64,12 @@ const QiblaDirection = ({ latitude, longitude }) => {
         <div className="container">
           <h1 className="app-name">Beautiful Compass App</h1>
           <div className="compass-container" style={{ position: "relative" }}>
+              {/* <img
+              src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
+              alt="Compass"
+              className="compass-image"
+              style={{ transform: `rotate(${direction}deg)` }}
+            /> */}
               <img 
             style={{
               transform: `rotate(${direction}deg)`,
