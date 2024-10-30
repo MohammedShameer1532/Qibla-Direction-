@@ -24,6 +24,7 @@
 	background-color: #fff;
 	border-radius: 50%;
 	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+	border: 4px solid #243642;
 }
 
 .compass-image {
