@@ -53,7 +53,7 @@ const QiblaDirection = ({ latitude, longitude }) => {
 
   const getCardinalDirection = () => {
     const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-    const index = Math.round(heading / 45) % 8;
+    const index = Math.round(direction / 45) % 8;
     return directions[index];
   };
 
