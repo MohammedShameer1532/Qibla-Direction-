@@ -68,18 +68,32 @@ const QiblaDirection = ({ latitude, longitude }) => {
               style={{ transform: `rotate(${direction - heading}deg)` }}
             />
               <div
-              className="qibla-pointer"
+              className="clock-needle"
               style={{
                 position: "absolute",
-                width: "4px",
-                height: "50%",
-                backgroundColor: "red",
-                top: "25%",
-                left: "50%",
+                top: "75px",
+                left: "123px",
+                width: "2px",                // Thin needle
+                height: "100px",             // Length of the needle
+                backgroundColor: "black",      // Color of the needle
                 transform: `rotate(${direction - heading}deg) translateX(-50%)`,
-                transformOrigin: "bottom center",
+                transformOrigin: "bottom center",  // Pivot from the bottom
               }}
-            />
+            >
+              <div
+                className="arrowhead"
+                style={{
+                  position: "absolute",
+                  bottom: "100%",  // Position arrowhead at the top of the needle
+                  left: "-4px",    // Center it horizontally
+                  width: "0",
+                  height: "0",
+                  borderLeft: "6px solid transparent",
+                  borderRight: "6px solid transparent",
+                  borderBottom: "10px solid black",  // Match needle color
+                }}
+              />
+            </div>
             {/* Qibla direction indicator */}
           </div>
           <p className="heading-value">{`Heading: ${heading?.toFixed(2) || 0}°`}</p>
