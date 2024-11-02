@@ -1,49 +1,39 @@
-import { useEffect, useState } from "react";
-import axios from 'axios';
-import './App.css';
+import React, { useState, useEffect } from "react";
 
+// Define the Qibla Compass component
+const QiblaDirection = () => {
+  const [qiblaDirection, setQiblaDirection] = useState(null);
+  const [deviceOrientation, setDeviceOrientation] = useState(0);
 
-const QiblaDirection = ({ latitude, longitude }) => {
-  const [direction, setDirection] = useState(null);
-  const [heading, setHeading] = useState(0);
-
-  useEffect(() => {
-    const fetchQibla = async () => {
-      try {
-        const res = await axios.get(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
-        console.log(res);
-        const response = res?.data?.data?.direction;
-        setDirection(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if (latitude && longitude) {
-      fetchQibla();
+  // Function to fetch Qibla direction from Aladhan API
+  const fetchQiblaDirection = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`
+      );
+      const data = await response.json();
+      setQiblaDirection(data.data.direction);
+    } catch (error) {
+      console.error("Error fetching Qibla direction:", error);
     }
-  }, [latitude, longitude]);
+  };
 
+  // Get user's location and call the API
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      fetchQiblaDirection(latitude, longitude);
+    });
+  }, []);
+
+  // Device orientation event handler
   useEffect(() => {
     const handleOrientation = (event) => {
-      let newHeading = event.alpha;
-
-      if (newHeading !== null) {
-        newHeading = (-1 * (newHeading - 85) + 360) % 360;
-        setHeading(newHeading);
-      }
+      setDeviceOrientation(event.alpha); // device's heading direction
     };
 
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission()
-        .then(response => {
-          if (response === 'granted') {
-            window.addEventListener("deviceorientation", handleOrientation);
-          }
-        })
-        .catch(console.error);
-    } else {
-      window.addEventListener("deviceorientation", handleOrientation);
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleOrientation, true);
     }
 
     return () => {
@@ -51,50 +41,40 @@ const QiblaDirection = ({ latitude, longitude }) => {
     };
   }, []);
 
+  // Calculate the Qibla angle relative to the device orientation
+  const getCompassRotation = () => {
+    if (qiblaDirection === null) return 0;
+    return qiblaDirection - deviceOrientation;
+  };
+
   return (
-    <div>
-      {direction !== null ? (
-        <div className="container">
-          <div className="compass-container" style={{ position: "relative" }}>
-            {/* <img
-              src="https://media.geeksforgeeks.org/wp-content/uploads/20240122153821/compass.png"
-              alt="Compass"
-              className="compass-image"
-              style={{ transform: `rotate(${direction - heading}deg)` }}
-            /> */}
-            <strong><h2> qibla</h2></strong>
-            <div
-              className="clock-needle"
-              style={{
-                position: "absolute",
-                width: "2px",
-                height: "90px",   // Length of the needle
-                backgroundColor: "black",
-                transform: `rotate(${direction - heading}deg) translateX(-50%)`,
-                transformOrigin: "bottom center",  // Pivot from the bottom
-                display: 'flex',
-                bottom: "50%", // Centers needle vertically
-                left: "50%",
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <div
-                className="arrowhead"
-                style={{
-                  position: "absolute",
-                  bottom: "100%",
-                  left: "-4px",
-                  width: "0",
-                  height: "0",
-                  borderLeft: "6px solid transparent",
-                  borderRight: "6px solid transparent",
-                  borderBottom: "10px solid black",
-                }}
-              />
-            </div>
-          </div>
-          <p className="qibla-direction">{`Qibla Direction: ${direction?.toFixed(2) || 0}°`}</p>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>Qibla Compass</h2>
+      {qiblaDirection !== null ? (
+        <div
+          style={{
+            width: "200px",
+            height: "200px",
+            borderRadius: "50%",
+            border: "2px solid #333",
+            position: "relative",
+            margin: "auto",
+          }}
+        >
+          <div
+            style={{
+              width: "2px",
+              height: "100px",
+              backgroundColor: "red",
+              position: "absolute",
+              top: "50px",
+              left: "99px",
+              transform: `rotate(${getCompassRotation()}deg)`,
+              transformOrigin: "bottom center",
+            }}
+          />
+          <p>Your device heading: {Math.round(deviceOrientation)}°</p>
+          <p>Qibla direction: {Math.round(qiblaDirection)}°</p>
         </div>
       ) : (
         <p>Loading Qibla direction...</p>
