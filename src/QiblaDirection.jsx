@@ -29,7 +29,10 @@ const QiblaDirection = () => {
   // Device orientation event handler
   useEffect(() => {
     const handleOrientation = (event) => {
-      setDeviceOrientation(event.alpha); // device's heading direction
+      // Using 'alpha' to get the rotation around the z-axis (0 degrees is north)
+      if (event.alpha !== null) {
+        setDeviceOrientation(event.alpha);
+      }
     };
 
     if (window.DeviceOrientationEvent) {
@@ -44,7 +47,10 @@ const QiblaDirection = () => {
   // Calculate the Qibla angle relative to the device orientation
   const getCompassRotation = () => {
     if (qiblaDirection === null) return 0;
-    return qiblaDirection - deviceOrientation;
+    // Calculate the relative angle from the device's orientation to the Qibla direction
+    const rotation = qiblaDirection - deviceOrientation;
+    // Ensure the rotation is within 0-360 degrees
+    return (rotation + 360) % 360;
   };
 
   return (
@@ -77,10 +83,4 @@ const QiblaDirection = () => {
           <p>Qibla direction: {Math.round(qiblaDirection)}°</p>
         </div>
       ) : (
-        <p>Loading Qibla direction...</p>
-      )}
-    </div>
-  );
-};
-
-export default QiblaDirection;
+        <p>Loading Q
