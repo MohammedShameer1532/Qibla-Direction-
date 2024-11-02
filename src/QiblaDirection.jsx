@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // Define the Qibla Compass component
 const QiblaDirection = () => {
   const [qiblaDirection, setQiblaDirection] = useState(null);
-  const [deviceOrientation, setDeviceOrientation] = useState(0);
+  const [deviceHeading, setDeviceHeading] = useState(null);
 
   // Function to fetch Qibla direction from Aladhan API
   const fetchQiblaDirection = async (latitude, longitude) => {
@@ -29,12 +29,13 @@ const QiblaDirection = () => {
   // Device orientation event handler
   useEffect(() => {
     const handleOrientation = (event) => {
-      // Using 'alpha' to get the rotation around the z-axis (0 degrees is north)
+      // Use 'alpha' for the device heading (0 degrees is north)
       if (event.alpha !== null) {
-        setDeviceOrientation(event.alpha);
+        setDeviceHeading(event.alpha);
       }
     };
 
+    // Check if device orientation is supported
     if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientation", handleOrientation, true);
     }
@@ -44,19 +45,19 @@ const QiblaDirection = () => {
     };
   }, []);
 
-  // Calculate the Qibla angle relative to the device orientation
+  // Calculate the Qibla angle relative to the device heading
   const getCompassRotation = () => {
-    if (qiblaDirection === null) return 0;
+    if (qiblaDirection === null || deviceHeading === null) return 0;
+    
     // Calculate the relative angle from the device's orientation to the Qibla direction
-    const rotation = qiblaDirection - deviceOrientation;
-    // Ensure the rotation is within 0-360 degrees
-    return (rotation + 360) % 360;
+    const rotation = (qiblaDirection - deviceHeading + 360) % 360;
+    return rotation;
   };
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h2>Qibla Compass</h2>
-      {qiblaDirection !== null ? (
+      {qiblaDirection !== null && deviceHeading !== null ? (
         <div
           style={{
             width: "200px",
@@ -65,6 +66,7 @@ const QiblaDirection = () => {
             border: "2px solid #333",
             position: "relative",
             margin: "auto",
+            background: "lightblue",
           }}
         >
           <div
@@ -72,15 +74,4 @@ const QiblaDirection = () => {
               width: "2px",
               height: "100px",
               backgroundColor: "red",
-              position: "absolute",
-              top: "50px",
-              left: "99px",
-              transform: `rotate(${getCompassRotation()}deg)`,
-              transformOrigin: "bottom center",
-            }}
-          />
-          <p>Your device heading: {Math.round(deviceOrientation)}°</p>
-          <p>Qibla direction: {Math.round(qiblaDirection)}°</p>
-        </div>
-      ) : (
-        <p>Loading Q
+              position: "ab
